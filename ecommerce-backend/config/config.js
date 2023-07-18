@@ -1,17 +1,12 @@
-// Require dotenv for environment variables
-require('dotenv').config(); 
-
-// Get environment variables
+require('dotenv').config();
 const { DB_NAME, DB_USER, DB_PASSWORD } = process.env;
 
-// Import Sequelize
 const Sequelize = require('sequelize');
 
-// Create connection
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: 'localhost',
-  dialect: 'mysql'
+  dialect: 'mysql',
+  logging: true 
 });
 
-// Export connection 
 module.exports = sequelize;

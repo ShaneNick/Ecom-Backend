@@ -1,76 +1,84 @@
-const router = require('express').Router();
-const { Tag } = require('../../models');
+const express = require('express');
+const { Tag, Product, ProductTag } = require('../../models');
+const router = express.Router();
 
-// GET all tags
+// Retrieving all tags
 router.get('/', async (req, res) => {
   try {
-    const tags = await Tag.findAll();
-    res.json(tags);
+    const tagsData = await Tag.findAll({
+      include: [{ model: Product, through: ProductTag, as: 'tagged_products' }]
+    });
+    res.status(200).json(tagsData);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// GET one tag by id
+// Retrieving a single tag by its id
 router.get('/:id', async (req, res) => {
   try {
-    const tag = await Tag.findByPk(req.params.id);
-    if(!tag) {
-      res.status(404).json({ message: 'No tag found with this id!' });
+    const singleTagData = await Tag.findByPk(req.params.id, {
+      include: [{ model: Product, through: ProductTag, as: 'tagged_products' }]
+    });
+
+    if (!singleTagData) {
+      res.status(404).json({ message: 'Tag with this id does not exist!' });
       return;
     }
-    res.json(tag);
+
+    res.status(200).json(singleTagData);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// CREATE a new tag
+// Creating a new tag
 router.post('/', async (req, res) => {
   try {
-    const tag = await Tag.create(req.body);
-    res.status(200).json(tag);
+    const newTagData = await Tag.create(req.body);
+    res.status(200).json(newTagData);
   } catch (err) {
     res.status(400).json(err);
   }
 });
 
-// UPDATE a tag by id
+// Updating a tag name using its id
 router.put('/:id', async (req, res) => {
   try {
-    const tag = await Tag.update(req.body, {
+    const updatedTagData = await Tag.update(req.body, {
       where: {
         id: req.params.id,
       },
     });
-    if (!tag[0]) {
-      res.status(404).json({ message: 'No tag with this id!' });
+
+    if (!updatedTagData) {
+      res.status(404).json({ message: 'Tag with this id does not exist!' });
       return;
     }
-    res.json(tag);
+
+    res.status(200).json(updatedTagData);
   } catch (err) {
     res.status(500).json(err);
-  }  
+  }
 });
 
-// DELETE a tag by id
+// Deleting a tag using its id
 router.delete('/:id', async (req, res) => {
   try {
-    const tag = await Tag.destroy({
+    const deletedTagData = await Tag.destroy({
       where: {
-        id: req.params.id
-      }
+        id: req.params.id,
+      },
     });
 
-    if (!tag) {
-      res.status(404).json({ message: 'No tag with this id!' });
+    if (!deletedTagData) {
+      res.status(404).json({ message: 'Tag with this id does not exist!' });
       return;
     }
 
-    res.json(tag);
-  
+    res.status(200).json(deletedTagData);
   } catch (err) {
-    res.status(500).json(err)
+    res.status(500).json(err);
   }
 });
 

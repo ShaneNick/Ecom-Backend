@@ -1,32 +1,36 @@
-DROP DATABASE IF EXISTS ecommerce_db;
+DROP DATABASE IF EXISTS ecom_db;
+CREATE DATABASE ecom_db;
+USE ecom_db;
 
-CREATE DATABASE ecommerce_db;
-
-USE ecommerce_db;
-
-CREATE TABLE categories (
+CREATE TABLE Categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   category_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE products (
+CREATE TABLE Products (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_name VARCHAR(255) NOT NULL,
   price DECIMAL(10,2) NOT NULL,
-  stock INT NOT NULL DEFAULT 10,  
+  stock INT NOT NULL DEFAULT 10, 
   category_id INT,
-  FOREIGN KEY (category_id) REFERENCES categories(id)
+  FOREIGN KEY (category_id) 
+    REFERENCES Categories(id)
+    ON DELETE SET NULL  
 );
 
-CREATE TABLE tags (
+CREATE TABLE Tags (
   id INT AUTO_INCREMENT PRIMARY KEY,
   tag_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE product_tags (
+CREATE TABLE ProductTags (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  product_id INT,
-  tag_id INT,
-  FOREIGN KEY (product_id) REFERENCES products(id),
-  FOREIGN KEY (tag_id) REFERENCES tags(id)
+  product_id INT NOT NULL,
+  tag_id INT NOT NULL,
+  FOREIGN KEY (product_id) 
+    REFERENCES Products(id)
+    ON DELETE CASCADE,
+  FOREIGN KEY (tag_id)
+    REFERENCES Tags(id)
+    ON DELETE CASCADE  
 );
