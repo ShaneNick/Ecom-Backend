@@ -18,8 +18,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const singleTagData = await Tag.findByPk(req.params.id, {
-      include: [{ model: Product, through: ProductTag, as: 'tagged_products' }]
-    });
+      include: [Product]    });
 
     if (!singleTagData) {
       res.status(404).json({ message: 'Tag with this id does not exist!' });
